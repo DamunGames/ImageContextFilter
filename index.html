@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta name="author" content="DamunGames">
+    <meta name="description" content="画像に複数のフィルターをかけるページ">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像フィルター</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+<body>
+    <div class="info-area">
+        <label id="descriptionLabel">
+            「画像を選択」or画像の貼り付けやドラッグ&ドロップで画像表示。<br>
+            スライダー等で操作するとエフェクト反映。<br>
+            ドラッグ&ドロップでエフェクトの並び変え。<br>
+        </label>
+        <label id="infoLabel"></label>
+    </div>
+    <div class="container">
+        <div class="left-side">
+            <div class="effectSortable">
+                <div class="border-pale left-side" id="scaleEffect" style="display: inline-block;">
+                    <input type="checkbox" id="scaleCheckbox">
+                    <label for="scaleCheckbox">スケール</label>
+                    <input type="button" id="scaleResetButton" value="リセット"><br>
+                    <label for="scaleNumber">倍率:</label><br>
+                    <input type="range" class="range-width" id="scaleRange" min="0.1" max="10" step="0.01" value="1">
+                    <input type="number" class="number-width" id="scaleNumber" value="1">
+                </div>
+                <div class="border-pale left-side" id="bgColorEffect" style="display: inline-block;">
+                    <input type="checkbox" id="bgColorCheckbox">
+                    <label for="bgColorCheckbox">背景色</label>
+                    <input type="button" id="bgColorResetButton" value="リセット"><br>
+                    <label for="bgColorColor">カラー:</label><br>
+                    <input type="color" id="bgColorColor" value="#000000">
+                    <br>
+                    <label for="bgColorAlphaNumber">アルファ:</label><br>
+                    <input type="range" class="range-width" id="bgColorAlphaRange" min="0" max="1" step="0.01" value="0">
+                    <input type="number" class="number-width" id="bgColorAlphaNumber" value="0">
+                </div>
+                <div class="border-pale" id="blurEffect">
+                    <input type="checkbox" id="blurCheckbox">
+                    <label for="blurCheckbox">ぼかし</label>
+                    <input type="button" id="blurResetButton" value="リセット"><br>
+                    <label for="blurNumber">px:</label><br>
+                    <input type="range" class="range-width" id="blurRange" min="0" max="100" value="0">
+                    <input type="number" class="number-width" id="blurNumber" value="0">
+                </div>
+                <div class="border-pale" id="brightnessEffect">
+                    <input type="checkbox" id="brightnessCheckbox">
+                    <label for="brightnessCheckbox">輝度</label>
+                    <input type="button" id="brightnessResetButton" value="リセット"><br>
+                    <label for="brightnessNumber">輝度:</label><br>
+                    <input type="range" class="range-width"  id="brightnessRange" min="0" max="50" step="0.01" value="1">
+                    <input type="number" class="number-width" id="brightnessNumber" step="0.01" value="1">
+                </div>
+                <div class="border-pale" id="contrastEffect">
+                    <input type="checkbox" id="contrastCheckbox">
+                    <label for="contrastCheckbox">コントラスト</label>
+                    <input type="button" id="contrastResetButton" value="リセット"><br>
+                    <label for="contrastNumber">コントラスト%:</label><br>
+                    <input type="range" class="range-width"  id="contrastRange" min="0" max="1000" value="100">
+                    <input type="number" class="number-width" id="contrastNumber" value="100">
+                </div>
+                <div class="border-pale" id="dropShadowEffect">
+                    <input type="checkbox" id="dropShadowCheckbox">
+                    <label for="dropShadowCheckbox">ドロップシャドウ</label>
+                    <input type="button" id="dropShadowResetButton" value="リセット">
+                    <br>
+                    <label for="dropShadowOffsetXNumber">Xオフセット:</label><br>
+                    <input type="range" class="range-width"  id="dropShadowOffsetXRange" min="-100" max="100" value="0">
+                    <input type="number" class="number-width" id="dropShadowOffsetXNumber" value="0">
+                    <br>
+                    <label for="dropShadowOffsetYNumber">Yオフセット:</label><br>
+                    <input type="range" class="range-width"  id="dropShadowOffsetYRange" min="-100" max="100" value="0">
+                    <input type="number" class="number-width" id="dropShadowOffsetYNumber" value="0">
+                    <br>
+                    <label for="dropShadowBlurNumber">ぼかし半径:</label><br>
+                    <input type="range" class="range-width"  id="dropShadowBlurRange" min="0" max="100" value="0">
+                    <input type="number" class="number-width" id="dropShadowBlurNumber" value="0">
+                    <br>
+                    <label for="dropShadowColor">カラー:</label>
+                    <input type="color" id="dropShadowColor" value="#000000FF">
+                    <br>
+                    <label for="dropShadowAlphaNumber">アルファ:</label><br>
+                    <input type="range" class="range-width" id="dropShadowAlphaRange" min="0" max="1" step="0.01" value="1">
+                    <input type="number" class="number-width" id="dropShadowAlphaNumber" value="1">
+                </div>
+                <div class="border-pale" id="grayscaleEffect">
+                    <input type="checkbox" id="grayscaleCheckbox">
+                    <label for="grayscaleCheckbox">グレースケール</label>
+                    <input type="button" id="grayscaleResetButton" value="リセット"><br>
+                    <label for="grayscaleNumber">グレースケール%:</label><br>
+                    <input type="range" class="range-width"  id="grayscaleRange" min="0" max="100" value="0">
+                    <input type="number" class="number-width" id="grayscaleNumber" value="0">
+                </div>
+                <div class="border-pale" id="hueRotateEffect">
+                    <input type="checkbox" id="hueRotateCheckbox">
+                    <label for="hueRotateCheckbox">色相回転</label>
+                    <input type="button" id="hueRotateResetButton" value="リセット"><br>
+                    <label for="hueRotateNumber">色相回転角度(360):</label><br>
+                    <input type="range" class="range-width"  id="hueRotateRange" min="0" max="360" value="0">
+                    <input type="number" class="number-width" id="hueRotateNumber" value="0">
+                </div>
+                <div class="border-pale" id="invertEffect">
+                    <input type="checkbox" id="invertCheckbox">
+                    <label for="invertCheckbox">色反転</label>
+                    <input type="button" id="invertResetButton" value="リセット"><br>
+                    <label for="invertNumber">色反転%:</label><br>
+                    <input type="range" class="range-width"  id="invertRange" min="0" max="100" value="0">
+                    <input type="number" class="number-width" id="invertNumber" value="0">
+                </div>
+                <div class="border-pale" id="opacityEffect">
+                    <input type="checkbox" id="opacityCheckbox">
+                    <label for="opacityCheckbox">透過</label>
+                    <input type="button" id="opacityResetButton" value="リセット"><br>
+                    <label for="opacityNumber">不透過%:</label><br>
+                    <input type="range" class="range-width"  id="opacityRange" min="0" max="100" value="100">
+                    <input type="number" class="number-width" id="opacityNumber" value="100">
+                </div>
+                <div class="border-pale" id="saturateEffect">
+                    <input type="checkbox" id="saturateCheckbox">
+                    <label for="saturateCheckbox">彩度</label>
+                    <input type="button" id="saturateResetButton" value="リセット"><br>
+                    <label for="saturateNumber">彩度%:</label><br>
+                    <input type="range" class="range-width"  id="saturateRange" min="0" max="10000" value="100">
+                    <input type="number" class="number-width" id="saturateNumber" value="100">
+                </div>
+            </div>
+        </div>
+
+        <div class="right-side">
+            <input type="file" id="fileInput" style="display: none;">
+            <div class="drag-area hover-pointer" id="dropArea">
+                <label>画像を選択 or<br>ドラッグ&ドロップ</label>
+            </div>
+            <canvas class="hover-pointer" id="previewCanvas" style="display: none;"></canvas>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="module" src="scripts.js"></script>
+</body>
+</html>
