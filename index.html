@@ -16,7 +16,23 @@
             スライダー等で操作するとエフェクト反映。<br>
             ドラッグ&ドロップでエフェクトの並び変え。<br>
         </label>
-        <label id="infoLabel"></label>
+        <div style="display: inline-block;">
+            <label for="dropdownClip">くり抜き:</label>
+            <select id="dropdownClip">
+                <option value="none">無し</option>
+                <option value="circle">Circle</option>
+                <option value="borderRadius">Border radius</option>
+            </select>
+            <div id="sliderClip-container" style="display: none;">
+                <label for="sliderClipNumber">半径%:</label>
+                <input type="range" class="range-width" id="sliderClipRange" min="0" max="100" value="50">
+                <input type="number" class="number-width" id="sliderClipNumber" value="50">
+            </div>
+        </div>
+        <div>
+            <label id="infoLabel" style="display: block;"></label>
+            <label id="infoLabelSize"></label>
+        </div>
     </div>
     <div class="container">
         <div class="left-side">

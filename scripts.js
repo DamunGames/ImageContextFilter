@@ -1,6 +1,8 @@
 // scripts.js
 
+import * as common from "./common.js";
 import * as effects from "./effects.js";
+import * as clips from "./clips.js";
 
 // エフェクトID定数
 const scaleEffectID = "scaleEffect";
@@ -15,13 +17,21 @@ const invertEffectID = "invertEffect";
 const opacityEffectID = "opacityEffect";
 const saturateEffectID = "saturateEffect";
 
+const sliderClipRange = document.getElementById("sliderClipRange");
+
 const infoLabel = document.getElementById("infoLabel");
+const infoLabelSize = document.getElementById("infoLabelSize");
 
 const previewCanvas = document.getElementById("previewCanvas");
 const previewImage = new Image();
 
 let showImageName = "";
 let isImageLoaded = false;
+
+// クリップクラス
+const circleClip = new clips.CircleClip();
+const borderRadiusClip = new clips.BorderRadiusClip();
+let clip = null;
 
 // エフェクトIDとエフェクトクラスの連想配列
 const scaleEffect = new effects.ScaleEffect(drawImage, scaleEffectID.slice(0, -6));
@@ -55,6 +65,7 @@ let sortedEffectIDs = [
 (function() {
     initializeImage();
     initializeInputEvents();
+    initializeClipEvents();
     initializeEffects();
 })();
 
@@ -102,27 +113,31 @@ function onerrorImage() {
 // 画像描画
 function drawImage() {
     if (!isImageLoaded) return;
-    setBGColor();
-    const params = getPreviewParams();
-    resizeCanvas(previewCanvas, params.size, params.scale);
     const ctx = previewCanvas.getContext("2d");
+    ctx.reset();
+    // 背景色設定
+    setBGColor();
+    // キャンバスサイズ更新
+    const params = getPreviewParams();
+    previewCanvas.width = params.size.width * params.scale;
+    previewCanvas.height = params.size.height * params.scale;
+    // クリップ(キャンバスサイズ更新後、スケール反映前の前提)
+    clip?.clip(ctx, sliderClipRange.value);
+    // スケール反映
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(params.scale, params.scale);
+    // フィルター反映
     ctx.filter = params.filter;
+    // 描画
     ctx.drawImage(previewImage, params.offset.x, params.offset.y);
+    // サイズ表示
+    setInfoSize(ctx.canvas.width + "x" + ctx.canvas.height + "px");
 }
 
 // 背景色設定
 function setBGColor() {
     const rgbaColor = bgColorEffect.getRGBAColorIfChecked();
     document.getElementById("previewCanvas").style.backgroundColor = rgbaColor;
-}
-
-// キャンバスサイズ更新
-function resizeCanvas(canvas, size, scale) {
-    const ctx = canvas.getContext("2d");
-    canvas.width = size.width * scale;
-    canvas.height = size.height * scale;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(scale, scale);
 }
 
 // キャンバスの表示設定
@@ -145,6 +160,9 @@ function setIsImageLoaded(isLoaded) {
 // 情報設定
 function setInfo(text) {
     infoLabel.textContent = text;
+}
+function setInfoSize(text) {
+    infoLabelSize.textContent = text;
 }
 
 // 画像URL判定
@@ -273,6 +291,29 @@ function initializeInputEvents() {
             // ファイルの画像読み込み
             loadImageFile(clipboardData.files[0]);
         }
+    });
+}
+
+// くり抜きイベント初期化
+function initializeClipEvents() {
+    common.setupRangeAndNumberInput("sliderClipRange", "sliderClipNumber", parseInt, drawImage);
+
+    document.getElementById("dropdownClip").addEventListener("change", function() {
+        var sliderContainer = document.getElementById("sliderClip-container");
+        if (this.value === "none") {
+            sliderContainer.style.display = "none";
+            clip = null;
+        } else if (this.value === "circle") {
+            sliderContainer.style.display = "inline-block";
+            clip = circleClip;
+        } else if (this.value === "borderRadius") {
+            sliderContainer.style.display = "inline-block";
+            clip = borderRadiusClip;
+        } else {
+            sliderContainer.style.display = "none";
+            clip = null;
+        }
+        drawImage();
     });
 }
 
